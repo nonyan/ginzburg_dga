@@ -1,0 +1,207 @@
+\documentclass[uplatex,12pt,dvipdfmx]{jsarticle}
+
+\usepackage{fullpage}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+
+\usepackage[unicode,pagebackref]{hyperref} 
+\usepackage{url}
+\hypersetup{breaklinks=true}
+
+\usepackage[all]{xy}
+\usepackage{tikz}
+\usepackage{quiver}
+\usetikzlibrary{matrix}
+\usepackage{dynkin-diagrams}
+
+\usepackage{empheq}
+
+
+\makeatletter
+\def\lst@lettertrue{\let\lst@ifletter\iffalse}
+\makeatother
+
+
+\setcounter{MaxMatrixCols}{20}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{example}[definition]{Example}
+\newtheorem{main}[definition]{Main Theorem}
+\newtheorem{question}[definition]{Question}
+
+\numberwithin{equation}{section}
+
+\newcounter{proofcounter}[definition]
+
+\makeatletter
+\renewenvironment{proof}[1][Proof.]{\par
+	\pushQED{\qed}%
+	\normalfont \topsep6\p@\@plus6\p@\relax
+	\trivlist
+	\refstepcounter{proofcounter} %proof環境用カウンタをインクリメント
+	\item[\hskip\labelsep
+	\bfseries
+	#1\@addpunct{.}]\ignorespaces
+}{%
+	\popQED\endtrivlist\@endpefalse
+}
+
+
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable} % ページまたぎに対応させる
+% "myquote" という新しい環境を定義
+\newtcolorbox{myquote}{
+    colback=gray!10!white,
+    colframe=gray!60!black,
+    boxrule=0pt,   % ★先に全体の枠をなしにする
+    leftrule=3mm,  % ★そのあとで左だけ太くする
+    arc=0mm,
+    top=1mm, bottom=1mm, left=2mm, right=2mm,
+    breakable,
+    parbox=false,
+    after skip=1em % 箱の下の余白（あると綺麗です）
+}
+
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\Projective}{\mathbb{P}}
+\newcommand{\Affine}{\mathbb{A}}
+\DeclareMathOperator{\linearspan}{span}
+\newcommand{\Vect}{\mathrm{Vect}}
+\newcommand{\Rep}{\mathrm{Rep}}
+\DeclareMathOperator{\Image}{Im}
+\DeclareMathOperator{\Kernel}{Ker}
+\DeclareMathOperator{\length}{\ell}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclarePairedDelimiter{\abra}{\langle}{\rangle} % < > angle brackets
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert} % | | absolute value
+\DeclarePairedDelimiter{\rbra}{\lparen}{\rparen} % () round brackets
+\DeclarePairedDelimiter{\cbra}{\lbrace}{\rbrace} % {} curly brackets
+\DeclarePairedDelimiter{\ssbra}{\llbracket}{\rrbracket} % [[]] double square brackets
+\newcommand{\Eulercharacteristic}{\chi}
+\newcommand{\Chernclass}{c}
+\DeclareMathOperator{\Picard}{Pic}
+
+\newcommand{\numGrothendieckgrp}[1]{K({#1})_{\mathrm{num}}}%numerical Grothendieck group
+\newcommand{\transpose}[1]{{\vphantom{#1}}^t \hspace{-1pt}#1}
+
+
+\allowdisplaybreaks
+
+\newcommand{\Hline}[1]{\noalign{\hrule height #1}}
+
+\newcommand{\relmiddle}[1]{\mathrel{}\middle#1\mathrel{}}
+
+\title{Ginzburg dgaとmarkov tripleの関係}
+\date{\empty}
+\author{}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{問題設定}
+
+$a,b,c\in\N=\Z_{\geq 0}$に対して次のquiverを用意する。
+
+% https://q.uiver.app/#q=WzAsMyxbMiwwLCIxIl0sWzQsMywiMyJdLFswLDMsIjIiXSxbMSwwLCJjXFx0ZXh0eyDmnKx9IiwxXSxbMCwyLCJhXFx0ZXh0eyDmnKx9IiwxXSxbMiwxLCJiIFxcdGV4dHsg5pysfSIsMV1d
+\begin{equation}
+	\begin{tikzcd}
+	&& 1 \\
+	\\
+	\\
+	2 &&&& 3
+	\arrow["{a\text{ 本}}"{description}, from=1-3, to=4-1]
+	\arrow["{b \text{ 本}}"{description}, from=4-1, to=4-5]
+	\arrow["{c\text{ 本}}"{description}, from=4-5, to=1-3]
+	\end{tikzcd}
+\end{equation}
+
+このquiverを $Q(a,b,c)$ とする。
+これに長さ$3$のcycleで構成されるpotential $W$ を用意し、Ginzburg dga $\Gamma_3(Q(a,b,c), W)$ を構成する。
+\begin{question}
+	generalな $W$ に対してGinzburg dga $\Gamma_3(Q(a,b,c),W)$ のcohomologyが $0$ 次に集中するための$a,b,c$に関する必要十分条件は $(a,b,c)$がmarkov tripleであることか否か。
+	\footnote{
+		ここでいう、$(a,b,c)$がmarkov tripleとは、$a^2 + b^2 + c^2 = abc$ を満たす自然数の組のことと推測する。
+	}
+\end{question}
+
+\begin{remark}
+	$a,b,c$がmarkov tripleであるとき、$\Gamma_3(Q(a,b,c), W)$のcohomologyが$0$次に集中することは知られているらしい。
+\end{remark}
+
+\begin{remark}
+	Quiverの表現の導来圏におけるexceptional collectionによる問題の言いかえもできる。
+\end{remark}
+
+\section{Ginzburg dgaの構成}
+
+$Q(a,b,c)$ に対して $1\to2$ の arrow を $x_1,\ldots,x_a$、$2\to3$ の arrow を $y_1,\ldots,y_b$、$3\to1$ の arrow を $z_1,\ldots,z_c$ とする。
+
+ひとまずpath algebraとしての積の順番は基本群の道の積と同じ向きで $x_i y_j z_k$ とする。
+\footnote{
+	左端が始点、右端が終点。
+}
+
+$Q(a,b,c)$の長さ$3$のcycleは次の形をしている。
+\begin{align}
+	x_i y_j z_k, \quad 1\leq i \leq a, \; 1\leq j \leq b, \; 1\leq k \leq c.
+\end{align}
+これらのcycleの線形結合として、potential $W$ を次のように定める。
+\begin{align}
+	W = \sum_{i=1}^a \sum_{j=1}^b \sum_{k=1}^c W_{ijk} x_i y_j z_k, \quad W_{ijk} \in \Complex.
+\end{align}
+
+Ginzburg dga $\Gamma_3(Q(a,b,c), W)$ は次のように構成される。
+\begin{itemize}
+	\item $Q(a,b,c)$の各arrow $x_i,y_j,z_k$ に対して、逆向きのarrow $x_i^*,y_j^*,z_k^*$ を追加し、さらに各頂点にループ$t_1,t_2,t_3$を追加してquiver $\hat{Q}$ を構成する。
+	\item $\hat{Q}$ の各arrowに次のようにdegreeを割り当てる。
+	\footnote{
+		文献により$0,1,2$を割り当ててるものもある。
+	}
+	\begin{gather}
+		\deg(x_i) = \deg(y_j) = \deg(z_k) = 0, \\
+		\deg(x_i^*) = \deg(y_j^*) = \deg(z_k^*) = -1, \\
+		\deg(t_1) = \deg(t_2) = \deg(t_3) = -2.
+	\end{gather}
+	\item $\Gamma_3(Q(a,b,c), W)$ のunderlying algebraは $\hat{Q}$ のpaths algebra $\Complex \hat{Q}$ として与えられる。
+	\item $\Gamma_3(Q(a,b,c), W)$ のgradingは上述のdegreeによって与えられる。
+	\item 微分$d$ は次のように定義される。
+	\begin{gather}
+		d(x_i) = d(y_j) = d(z_k) = 0, \\
+		d(x_i^*) = \frac{\partial W}{\partial x_i} = \sum_{j=1}^b \sum_{k=1}^c W_{ijk} y_j z_k, \\
+		d(y_j^*) = \frac{\partial W}{\partial y_j} = \sum_{i=1}^a \sum_{k=1}^c W_{ijk} z_k x_i, \\
+		d(z_k^*) = \frac{\partial W}{\partial z_k} = \sum_{i=1}^a \sum_{j=1}^b W_{ijk} x_i y_j, \\
+		d(t_1) = \sum_{i=1}^a x_i x_i^* - \sum_{k=1}^c z_k^* z_k, \\
+		d(t_2) = \sum_{j=1}^b y_j y_j^* - \sum_{i=1}^a x_i^* x_i, \\
+		d(t_3) = \sum_{k=1}^c z_k z_k^* - \sum_{j=1}^b y_j^* y_j.
+	\end{gather}
+\end{itemize}
+
+
+\section*{Geminiメモ}
+
+1. 論理のつながりこの問題における論理的な関係は以下のようになっています。条件: 「Ginzburg dga $\Gamma$ のコホモロジーが0次に集中する」これは、写像 $\Gamma \to H^0(\Gamma) \cong J(W)$ が 擬同型 (Quasi-isomorphism) になることを意味します。帰結: 「Jacobian代数 $J(W)$ は 3次元Calabi-Yau代数 (3-CY代数) になる」コホモロジーが集中する場合、その代数 $J(W)$ は滑らかで、大域次元（Global Dimension）が3などの良い性質（3-CY性）を持ちます。次元との関係: 「3-CY代数は、通常 無限次元 である」ここが最大のポイントです。3-CY代数は（半単純な場合を除き）多項式的な増大度（通常は $n^2$ や $n^3$ オーダー）を持つ無限次元代数になります。逆に、有限次元代数（かつ半単純でないもの）は、大域次元が無限大になるため、3-CY代数にはなりえません。
+
+代数 $A$ が $d$-Calabi-Yau 代数であるための条件の一つに、「大域次元（Global Dimension）が $d$ である（あるいは有限である）」 というものがあります。特に、$A$ の射影分解（Projective Resolution）が長さ $d$ で止まる必要があります。ここで、有限次元代数の性質についての強力な定理があります：定理:有限次元代数 $A$ が有限の大域次元を持つならば、その大域次元は 0 でなければならない（すなわち、$A$ は半単純代数 $\cong \mathbb{C} \times \dots \times \mathbb{C}$ でなければならない）。つまり：0-CY代数: 有限次元でありえます（例：半単純代数）。1-CY, 2-CY, 3-CY代数: 大域次元が $1, 2, 3$ なので、上記の定理により、絶対に有限次元にはなれません。
+
+
+
+\bibliography{reference.bib}
+\bibliographystyle{amsalpha}
+
+\end{document}
