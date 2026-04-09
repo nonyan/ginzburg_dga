@@ -11,7 +11,8 @@
 
 \usepackage[all]{xy}
 \usepackage{tikz}
-\usepackage{quiver}
+\usepackage{tikz-cd}
+\usetikzlibrary{calc}
 \usetikzlibrary{matrix}
 \usepackage{dynkin-diagrams}
 
@@ -47,7 +48,7 @@
 	\refstepcounter{proofcounter} %proof環境用カウンタをインクリメント
 	\item[\hskip\labelsep
 	\bfseries
-	#1\@addpunct{.}]\ignorespaces
+	1\@addpunct{.}]\ignorespaces
 }{%
 	\popQED\endtrivlist\@endpefalse
 }
@@ -93,15 +94,15 @@
 \newcommand{\Chernclass}{c}
 \DeclareMathOperator{\Picard}{Pic}
 
-\newcommand{\numGrothendieckgrp}[1]{K({#1})_{\mathrm{num}}}%numerical Grothendieck group
-\newcommand{\transpose}[1]{{\vphantom{#1}}^t \hspace{-1pt}#1}
+\newcommand{\numGrothendieckgrp}[1]{K({1})_{\mathrm{num}}}%numerical Grothendieck group
+\newcommand{\transpose}[1]{{\vphantom{1}}^t \hspace{-1pt}1}
 
 
 \allowdisplaybreaks
 
-\newcommand{\Hline}[1]{\noalign{\hrule height #1}}
+\newcommand{\Hline}[1]{\noalign{\hrule height 1}}
 
-\newcommand{\relmiddle}[1]{\mathrel{}\middle#1\mathrel{}}
+\newcommand{\relmiddle}[1]{\mathrel{}\middle1\mathrel{}}
 
 \title{Ginzburg dgaとmarkov tripleの関係}
 \date{\empty}
@@ -118,7 +119,6 @@
 
 $a,b,c\in\N=\Z_{\geq 0}$に対して次のquiverを用意する。
 
-% https://q.uiver.app/#q=WzAsMyxbMiwwLCIxIl0sWzQsMywiMyJdLFswLDMsIjIiXSxbMSwwLCJjXFx0ZXh0eyDmnKx9IiwxXSxbMCwyLCJhXFx0ZXh0eyDmnKx9IiwxXSxbMiwxLCJiIFxcdGV4dHsg5pysfSIsMV1d
 \begin{equation}
 	\begin{tikzcd}
 	&& 1 \\
@@ -128,7 +128,7 @@ $a,b,c\in\N=\Z_{\geq 0}$に対して次のquiverを用意する。
 	\arrow["{a\text{ 本}}"{description}, from=1-3, to=4-1]
 	\arrow["{b \text{ 本}}"{description}, from=4-1, to=4-5]
 	\arrow["{c\text{ 本}}"{description}, from=4-5, to=1-3]
-	\end{tikzcd}
+\end{tikzcd}
 \end{equation}
 
 このquiverを $Q(a,b,c)$ とする。
@@ -152,18 +152,18 @@ $a,b,c\in\N=\Z_{\geq 0}$に対して次のquiverを用意する。
 
 $Q(a,b,c)$ に対して $1\to2$ の arrow を $x_1,\ldots,x_a$、$2\to3$ の arrow を $y_1,\ldots,y_b$、$3\to1$ の arrow を $z_1,\ldots,z_c$ とする。
 
-ひとまずpath algebraとしての積の順番は基本群の道の積と同じ向きで $x_i y_j z_k$ とする。
+path algebraとしての積の順番は写像の合成と同じ向きで $z_k y_j x_i$ とする。
 \footnote{
-	左端が始点、右端が終点。
+	右端が始点、左端が終点。
 }
 
 $Q(a,b,c)$の長さ$3$のcycleは次の形をしている。
 \begin{align}
-	x_i y_j z_k, \quad 1\leq i \leq a, \; 1\leq j \leq b, \; 1\leq k \leq c.
+	z_k y_j x_i, \quad 1\leq i \leq a, \; 1\leq j \leq b, \; 1\leq k \leq c.
 \end{align}
 これらのcycleの線形結合として、potential $W$ を次のように定める。
 \begin{align}
-	W = \sum_{i=1}^a \sum_{j=1}^b \sum_{k=1}^c W_{ijk} x_i y_j z_k, \quad W_{ijk} \in \Complex.
+	W = \sum_{i=1}^a \sum_{j=1}^b \sum_{k=1}^c W_{ijk} z_k y_j x_i, \quad W_{ijk} \in \Complex.
 \end{align}
 
 Ginzburg dga $\Gamma_3(Q(a,b,c), W)$ は次のように構成される。
@@ -183,22 +183,257 @@ Ginzburg dga $\Gamma_3(Q(a,b,c), W)$ は次のように構成される。
 	\item 微分$d$ は次のように定義される。
 	\begin{gather}
 		d(x_i) = d(y_j) = d(z_k) = 0, \\
-		d(x_i^*) = \frac{\partial W}{\partial x_i} = \sum_{j=1}^b \sum_{k=1}^c W_{ijk} y_j z_k, \\
-		d(y_j^*) = \frac{\partial W}{\partial y_j} = \sum_{i=1}^a \sum_{k=1}^c W_{ijk} z_k x_i, \\
-		d(z_k^*) = \frac{\partial W}{\partial z_k} = \sum_{i=1}^a \sum_{j=1}^b W_{ijk} x_i y_j, \\
-		d(t_1) = \sum_{i=1}^a x_i x_i^* - \sum_{k=1}^c z_k^* z_k, \\
-		d(t_2) = \sum_{j=1}^b y_j y_j^* - \sum_{i=1}^a x_i^* x_i, \\
-		d(t_3) = \sum_{k=1}^c z_k z_k^* - \sum_{j=1}^b y_j^* y_j.
+		d(x_i^*) = \frac{\partial W}{\partial x_i} = \sum_{j=1}^b \sum_{k=1}^c W_{ijk} z_k y_j, \\
+		d(y_j^*) = \frac{\partial W}{\partial y_j} = \sum_{i=1}^a \sum_{k=1}^c W_{ijk} x_i z_k, \\
+		d(z_k^*) = \frac{\partial W}{\partial z_k} = \sum_{i=1}^a \sum_{j=1}^b W_{ijk} y_j x_i, \\
+		d(t_1) = \sum_{i=1}^a x_i^* x_i - \sum_{k=1}^c z_k z_k^*, \\
+		d(t_2) = \sum_{j=1}^b y_j^* y_j - \sum_{i=1}^a x_i x_i^*, \\
+		d(t_3) = \sum_{k=1}^c z_k^* z_k - \sum_{j=1}^b y_j y_j^*.
 	\end{gather}
 \end{itemize}
 
 
-\section*{Geminiメモ}
+\section{Ginzburg dgaのコホモロジーの計算}
 
-1. 論理のつながりこの問題における論理的な関係は以下のようになっています。条件: 「Ginzburg dga $\Gamma$ のコホモロジーが0次に集中する」これは、写像 $\Gamma \to H^0(\Gamma) \cong J(W)$ が 擬同型 (Quasi-isomorphism) になることを意味します。帰結: 「Jacobian代数 $J(W)$ は 3次元Calabi-Yau代数 (3-CY代数) になる」コホモロジーが集中する場合、その代数 $J(W)$ は滑らかで、大域次元（Global Dimension）が3などの良い性質（3-CY性）を持ちます。次元との関係: 「3-CY代数は、通常 無限次元 である」ここが最大のポイントです。3-CY代数は（半単純な場合を除き）多項式的な増大度（通常は $n^2$ や $n^3$ オーダー）を持つ無限次元代数になります。逆に、有限次元代数（かつ半単純でないもの）は、大域次元が無限大になるため、3-CY代数にはなりえません。
+$Q=Q(a,b,c)$とする。
+$\Gamma_3(Q, W)$ に $Q$ の path の長さを与える写像を拡張した grading を入れる。
+この grading を用いて、$\Gamma_3(Q, W)$ の cohomology を計算する。
+具体的には次のように定める。
+\begin{itemize}
+	\item $\ell(a)=1$, for $a\in Q_1$.
+	\item $\ell(a^*)=3-1=2$, for $a^*\in Q_1$.
+	\item $\ell(t_i)=3$, for $t_i$.
+\end{itemize}
+ここに現れる$3$は、$W$のcycleの長さである。
+このとき手計算で$\Gamma_3(Q, W)$の微分が次数 $0$の線型写像となることがわかる。
+また、$l\in\Z_{\ge 0}$を固定したとき、$\ell(p)=l$を満たす$\hat{Q}$のパス$p$は有限個であり、これが$\ell$によるgradingの基底を成す。
+これは具体的に計算でき有限次元である。
+さらに、これから$\Gamma_3(Q, W)$のもともとの斉次部分の$\ell$によるgradingでの直和分解を得ることができる。
+このことから、$\Gamma_3(Q, W)$のcohomologyは、$\ell$が誘導するgradingにより直和分解された有限次元ベクトル空間のdirect sumとなる。
+計算により得られる基底で$\Gamma_3(Q, W)$の微分の行列表示が得られるので、これを基に各直和成分の計算を実行できる。
+calc\_cohomology.pyはこの計算を実装したコードである。
 
-代数 $A$ が $d$-Calabi-Yau 代数であるための条件の一つに、「大域次元（Global Dimension）が $d$ である（あるいは有限である）」 というものがあります。特に、$A$ の射影分解（Projective Resolution）が長さ $d$ で止まる必要があります。ここで、有限次元代数の性質についての強力な定理があります：定理:有限次元代数 $A$ が有限の大域次元を持つならば、その大域次元は 0 でなければならない（すなわち、$A$ は半単純代数 $\cong \mathbb{C} \times \dots \times \mathbb{C}$ でなければならない）。つまり：0-CY代数: 有限次元でありえます（例：半単純代数）。1-CY, 2-CY, 3-CY代数: 大域次元が $1, 2, 3$ なので、上記の定理により、絶対に有限次元にはなれません。
+$1\le a\le b\le c\le 3$までの計算を実行している。
+$(a,b,c) = (3,3,3)$以外は、$H^{-1}(\Gamma_3(Q, W)) \neq 0$または$H^{-2}(\Gamma_3(Q, W)) \neq 0$となることがわかっている。
+$(a,b,c) = (3,3,3)$の場合は、計算した範囲では $H^{-i}_l(\Gamma_3(Q, W)) = 0, 1\le i\le 3, 2\le l\le 7 $ となっている。
+ここで$H^{-i}_l(\Gamma_3(Q, W))$は、$H^{-i}(\Gamma_3(Q, W))$の$\ell=l$の成分を表す。
 
+
+\section{Mutation による $(a,b,c)$の変換を活用できるか？}
+
+\cite{MR2739775}において、quiver with potentialのmutationが定義されている。
+Theorem 6.2によれば、cohomologyが0次に集中するquiver with potentialのmutationは、Ginzburg dgaの擬同型を誘導する。
+\footnote{\cite{MR2739775}ではcomplete Ginzburg dgaを用いているが、1.2節の最後にnon completeなケースも同様の結果を得ることができるとの注意があるため、今回の設定にも適用できると判断する。}
+そこでmutationを用いて、$(a,b,c)$がより「小さい」値のものに変換できれば、「小さな」$(a,b,c)$に対しての計算で問題を解決できる可能性がある。
+
+結論としては、それ以上「小さく」できない$(a,b,c)$が $a^2+b^2+c^2-abc=4$ を満たす範囲で無限に存在することが分かるため、このアプローチは採用できない。
+
+\subsection{$a^2+b^2+c^2-abc=4$の範囲で無限個の$(a,b,c)$を調べなければならない理由}
+まず、mutationは $(a,b,c) \mapsto (ab-c,b,a)$ または $(a,bc-a,c)$ または $(ac-b,a,c)$のいずれかの操作であることを確認する。
+ただしすべての成分が正の整数である範囲で定義されるものとする。
+前提として$Q$にはループがなく、長さ2のサイクルもないとする。
+$Q$の各頂点 $i$ に対してmutation $\mu_i$ が定義されている。
+まず、中間的なクイバー付きポテンシャル $(Q^\prime, W^\prime)$ を以下の手順で作成する 。
+\begin{enumerate}
+	\item （矢印の追加）: $i$ を終点とする各矢印 $\beta$ と、$i$ を始点とする各矢印 $\alpha$ のペアに対して、$\beta$ の始点から $\alpha$ の終点へ向かう新しい矢印 $[\alpha\beta]$ を追加する 。
+	\item （矢印の反転）: 頂点 $i$ を始点または終点とするすべての矢印を、逆向きの矢印（例：$\alpha^*$ や $\beta^*$）に置き換える 。
+\end{enumerate}
+次に、新しいポテンシャル $W^\prime$ を2つのポテンシャル $W^\prime_1$ と $W^\prime_2$ の和として定義する：
+\begin{itemize}
+	\item $W^\prime_1$: 元のポテンシャル $W$ の中に現れる合成パス $\alpha\beta$（$i$ を経由するパス）を、すべて新しい矢印 $[\alpha\beta]$ に置き換えたものとする 。
+	\item $W^\prime_2$: 新しく追加した矢印と反転した矢印からなる以下のポテンシャルとする 。
+	\begin{equation}
+		W'_2 = \sum_{\alpha, \beta} [\alpha\beta]\beta^*\alpha^*
+	\end{equation}
+\end{itemize}
+ここまでの操作で$Q^\prime$に新たに長さ2のサイクルが生まれている。
+（正確な理解ではないが）この後さらに$W^\prime$の中の長さ$2$のサイクルを構成する矢印を除去し、それとともに$W^\prime$からもそのサイクルを構成する項を除去することで、mutation後のquiver with potential $(\mu_i(Q), \mu_i(W))$ と定める。
+
+$Q(a,b,c)$で確認する。
+$ab>c$と仮定する。
+\footnote{
+	$ab\le c$のときは、mutationの結果得られるquiverが、$1$辺だけ逆向きのquiverとなり$Q(a,b,c)$の形を保てなくなる。
+	その場合はcycleが存在しないのでpotentialは$0$のみとなり、$H^{-1}$が消えないことがすぐわかる。
+}
+頂点$2$に対して上記のmutationを行うと、$1\to 3$の$ab$本の新たな矢印$[x_i y_j]$が追加され、$x_i,y_j$はその向きを逆にした$x_i^*,y_j^*$に置き換えられている。
+特にもともとの$3\to1$の矢印が$c$本あるため、長さ2のサイクル（$1\to3\to1$）が生まれている。
+$W$が十分にgenericであれば、$ab>c$から$c$個のサイクルが$W^\prime$の中に現れるため、これらを除去して、$ab-c$本の$1\to3$の向きの矢印が残る。
+また、そのほかは$3\to2$の矢印$y_j^*$が$b$本、$2\to1$の矢印$x_i^*$が$a$本残る。
+これにより、元の$Q(a,b,c)$の矢印の向き（$1\to2\to3\to1$）と巡回の向きが逆（$3\to2\to1\to3$）になっているが$Q(ab-c,b,a)$が得られ、$(a,b,c)$が$(ab-c,b,a)$に変換される。
+
+結局のところ、$Q(a,b,c),ab>c$の問題は$Q(ab-c,b,a)$の問題に帰着される。
+そこで上述の記号と異なるが、次のように記号と問題を設定する。
+
+\begin{question}
+	\begin{gather}
+		I=\{(a,b,c)\in\Z_{>0}{}^3 \mid a\le b\le c\}, \\
+		A=\{(a,b,c)\in I \mid bc>a\}, \\
+		B=\{(a,b,c)\in I \mid ac>b\}, \\
+		C=\{(a,b,c)\in I \mid ab>c\}
+	\end{gather}
+	とする。
+	$\mu_A\colon A\to\Z_{>0}{}^3, \mu_B\colon B\to\Z_{>0}{}^3, \mu_C\colon C\to\Z_{>0}{}^3$を
+	\begin{gather}
+		\mu_A(a,b,c) = (bc-a,b,c)\text{ を$I$に含まれるように並べなおしたもの}, \\
+		\mu_B(a,b,c) = (a,ac-b,c)\text{ を$I$に含まれるように並べなおしたもの}, \\
+		\mu_C(a,b,c) = (a,b,ab-c)\text{ を$I$に含まれるように並べなおしたもの}
+	\end{gather}
+	により定める。
+
+	$I$の元を頂点とし、$\mu_A, \mu_B, \mu_C$で移りあうものを結ぶ単純グラフ $S$ を考えるとき、$S$ の連結成分は無限に存在するか？
+\end{question}
+$S$ の連結成分ごとにそれに含まれる頂点$(a,b,c)$を一つ取り出し、$Q(a,b,c)$, $Q(a,c,b)$を調べればよい。
+
+$\alpha = (a,b,c)\in I$に対して$M_\alpha\coloneq c$を小さくすることを考える。
+$\mu_A, \mu_B, \mu_C$は$a^2+b^2+c^2-abc$を保つことに注意する。
+$a^2+b^2+c^2-abc = 4$を満たす$(a,b,c)\in I$に対しては$S$の連結成分は$(2, n, n), n\in\Z_{>0}$で代表できることが次のようにわかる。
+\footnote{
+	$A,B,C$に含まれない場合はmutation後に負の成分が登場し、quiverにはcycleが存在しなくなり、$H^{-1}$が消えないことがすぐにわかる。
+	$(2, n, n), n\ge 2$で代表できる連結成分は、mutationの定義を$A,B,C$の外に拡張して負の成分をゆるしたとしても、mutationの結果は必ず$A,B,C$に含まれてしまうため、$H^{-1}$が消えるかどうかは直ちにはわからない。
+}
+
+$(1, 1, 2), (2, 2, 2)$はそれぞれ1点からなる連結成分を成す。
+次に$(2, n, n),n\ge 3$という系列を考える。
+$(2, n, n)$は$\mu_A, \mu_B, \mu_C$で移しても$M_\alpha$が小さくならないことが手計算でわかる。
+また、$\alpha=(a,b,c)\in I$で$a\ge 3, a^2+b^2+c^2-abc=4$を満たすものについては
+\begin{equation}
+	\alpha\in C, 0 < M_{\mu_C(\alpha)} < M_\alpha
+\end{equation}
+が分かる。
+\footnote{
+	$f(x)=x^2-abx+(a^2+b^2-4)$とおくと$a^2+b^2+c^2-abc = 4$は$f(c)=0$と同値である。
+	$f(x)=(x-c)(x-c^\prime)$と因数分解できて、$c^\prime = ab-c$となる。
+	計算で$f(b)<0$が得られるので$c^\prime<b=M_{\mu_C(\alpha)}<c=M_\alpha$が分かる。
+}
+したがって有限回 $\mu_C$を施して、$(2,b,c)\in I, 4+b^2+c^2-2bc=4$に移ることが分かる。
+特に$b,c$に関する等式から$b=c$が分かる。
+
+また、異なる$n$に対して$(2,n,n)$は異なる連結成分に属することもわかる。
+まず$(a, b, c)$が$\mu_A, \mu_B, \mu_C$のいずれかによって$(a^\prime, b^\prime, c^\prime)$に移るとき、$(a^\prime, b^\prime, c^\prime)$も$\mu_A, \mu_B, \mu_C$のいずれかによって$(a, b, c)$に移ることに注意する。
+\footnote{
+	例えば$(a,b,c)$が$\mu_C$で$(a,ab-c,b)$に移るならば$(a,ab-c,b)\in B, \mu_B(a,ab-c,b)=(a,b,c)$が分かる。
+	元の$(a,b,c)$から変換が効いている個所でのmutationを行えばいい。
+}
+次に$\alpha=(a,b,c)\in I$について$a\ge 3$のとき、
+\begin{gather}
+	\alpha\in A\cap B, \\
+	M_{\mu_A(\alpha)} > M_\alpha, \\
+	M_{\mu_B(\alpha)} > M_\alpha
+\end{gather}
+がすぐにわかる。
+よって$\alpha=(a,b,c)\in I, a\ge3$のとき、$M_\alpha$は$\mu_A, \mu_B$で増加し、$\mu_C$で減少することがわかる。
+特に$M_\alpha$が減少する方向は$\mu_C$しかない。
+さらに$\alpha=(a,b,c)\in I, a\ge3$のとき、
+\begin{gather}
+	\mu_C(\mu_A(\alpha)) = \alpha, \\
+	\mu_C(\mu_B(\alpha)) = \alpha
+\end{gather}
+であり、$\mu_A,\mu_B$で移す前の$\alpha$を$\mu_C$で復元できる。
+したがって$S$から$(a,b,c)\in I, a\le2$を除いたグラフの連結成分はbinary treeの形を成すことがわかる。
+そのノードの親は$\mu_C$により求めることができる。
+したがって$\mu_C$を繰り返し適用して、到達した$(2,n,n)$はこのbinary treeのrootに接続していることが分かる。
+\footnote{
+	より一般にMarkov--Hurwitz equation
+	\begin{equation}
+		x_1{}^2+\cdots+x_n{}^2-ax_1\cdots x_n=k
+	\end{equation}
+	を満たす$(x_1,\ldots,x_n)$に対しても$x_i$を$ax_1\cdots x_{i-1}x_{i+1}\cdots x_n-x_i$に置き換える操作でmutationを定義できる。
+	$k>0$なら同様の議論ができ、$3\le x_1\le\cdots\le x_n$を満たす範囲では連結成分が$(n-1)$-ary treeの形を成す。
+	$x_1\le 2$の範囲とつなげて依然として連結成分のままとなるか、そのほかの連結成分とつながるかは不明である。
+	ただし、acyclicなグラフになることは別の議論でわかる。
+	$k\le 0$でもより簡単な不等式の議論で$x_n$以外でのmutationにより$M_\alpha$が狭義単調増加することが分かり、（$x_1$が正であること以外に何の条件も課すことなく）同様の議論で連結成分にrooted treeの構造を与えることができる。
+	根以外のすべてのnodeで、$x_n$でのmutationによりそのparent nodeに移ることができる。
+}
+よってもし$(2,n,n)$から$\alpha=(a,b,c),a\ge 3$を経由して$(2,m,m)$に移る場合、$\mu_C$を複数回施して$(2,n,n)$および$(2,m,m)$に至るしかなく、$(2,m,m)$は$\mu_C$で不変であるため$n=m$が成立する。
+
+$a^2+b^2+c^2-abc=k$の領域で$k=4$のときは無限個の連結成分があることが分かった。
+一方、$k\le0$においては$\alpha$に$\mu_C$を$M_\alpha$が狭義単調減少しなくなるまで施し続け、$0<M_{\alpha_0}\geq M_{\mu_C(\alpha_0)}$となる$\alpha_0$を得ることができる。
+この不等式を満たす$\alpha_0$は有限個しかないことを示すことができることから連結成分が有限個だとわかる。
+よって、$k\le0$を固定すれば調べる対象は有限個になるが、$k$自体が無限個あるため、結局のところ、無限個の$(a,b,c)$を調べなければならないことになる。
+
+
+\section{別のアプローチについて}
+
+Geminiによれば、次のような方針が考えられるらしい。
+まず $K(a,b,c) = a^2 + b^2 + c^2 - abc$ と定める。
+$K=0$を満たす$(a,b,c)$がmarkov tripleである。
+最初の注意で$K=0$のときはコホモロジーが0次に集中することが知られていると述べた。
+これを前提とすると、$K<0,K>0$のときにコホモロジーが0次に集中しないことを示せば、必要十分条件が$K=0$であることが示される。
+
+Geminiによる$K<0$のときの方針は次引用の通り。
+定理A（Ginzburg dgaのcohomologyが0次に集中するための必要十分条件はJacobian algebraが3次元CY代数になること）はGinzburg dgaが3次元CY代数になるという論文の結果からよさそうに思う。
+一方、定理B（$H^0(\Gamma(Q(a,b,c),W))$が3 次元 Calabi-Yau 代数になるための必要条件は$K\ge0$）と書かれている内容が、引用元の論文内には少なくとも明示的には書かれておらず、今のところ真偽が分からないため確認中である。
+
+\begin{myquote}
+	箙 $Q$: 頂点集合 $Q_0 = \{1, 2, 3\}$ とし、各頂点間の矢印の数を $a$ 本（$1 \to 2$）、$b$ 本（$2 \to 3$）、$c$ 本（$3 \to 1$）とする 3 部箙 $Q(a,b,c)$。
+	マルコフ的多項式: $K(a,b,c) = a^2 + b^2 + c^2 - abc$。
+	前提条件: $K(a,b,c) < 0$ を満たすとする（例：$a=3, b=3, c=4$ など）。
+
+	主定理: 任意の 3 次ポテンシャル $W$ に対して、Ginzburg dg 代数 $\Gamma = \Gamma_3(Q, W)$ のコホモロジーは 0 次に集中しない。
+	すなわち、ある $i \ge 1$ が存在して $H^{-i}(\Gamma) \neq 0$ となる。
+
+【引用する既知の定理】証明の根拠となる、既に確立されている2つの強力な定理を引用する。
+
+	定理 A (Keller の判定定理)出典: \cite{MR2795754} B. Keller, "Deformed Calabi-Yau completions", Journal für die reine und angewandte Mathematik (Crelles Journal), 654 (2011), 125-180.内容: Ginzburg dg 代数 $\Gamma(Q, W)$ について、そのコホモロジーが 0 次に集中する（すなわち任意の $i \neq 0$ に対して $H^i(\Gamma) = 0$ となる）ための必要十分条件は、0 次ホモロジーである Jacobian 代数 $J(W) = H^0(\Gamma)$ が 3 次元 Calabi-Yau 代数になることである。
+
+	定理 B (Bocklandt の次数付き CY3 箙の分類)出典: \cite{MR2355031} R. Bocklandt, "Graded Calabi Yau algebras of dimension 3", Journal of Pure and Applied Algebra, 212 (2008), 14-32.内容: 箙 $Q$ 上の次数付き代数が 3 次元 Calabi-Yau 代数になるためには、箙の隣接行列（Adjacency matrix）の固有値や、生成元と関係式の数から定まる Hilbert 級数が非常に強い制約を受ける。
+	特に 3 頂点の巡回的な箙 $Q(a,b,c)$ の場合、$J(W)$ が次数付き 3 次元 Calabi-Yau 代数になり得る（有限な大域次元と Gelfand-Kirillov 次元に関する適切な増大度を持つ）ための必要条件は、$a^2 + b^2 + c^2 - abc \ge 0$、すなわち $K(a,b,c) \ge 0$ （等号成立は境界条件）を満たすことである。
+	（※ $K < 0$ の領域では、関係式に対して生成元が多すぎるため、代数は Wild 型の指数関数的増大度を持ち、CY3 代数に必須のホモロジー的な双対性や多項式増大度を維持できないことが、非可換環論における Golod-Shafarevich 型の評価から示されている。）
+
+	【証明】仮定より、$K(a,b,c) < 0$ である。ステップ 1：Jacobian 代数 $J(W)$ の性質の評価任意の 3 次ポテンシャル $W$ を固定し、Jacobian 代数 $J(W) = \mathbb{C}Q / \langle \partial_\alpha W \rangle$ を考える。
+	ポテンシャル $W$ が 3 次の巡回語の線形結合であるため、巡回微分 $\partial_\alpha W$ はすべて 2 次の同次式となる。したがって、$J(W)$ は自然な次数付き代数（Graded algebra）となる。
+	ここで定理 B (Bocklandt) を適用する。
+	仮定 $K(a,b,c) < 0$ は、3 部箙 $Q(a,b,c)$ が次数付き 3 次元 Calabi-Yau 代数を構成するための必要条件 $K(a,b,c) \ge 0$ に違反している。
+	したがって、いかなるポテンシャル $W$ を選んだとしても、$J(W)$ は決して 3 次元 Calabi-Yau 代数にはなり得ない。
+
+	ステップ 2：導来化（Ginzburg dg 代数）への翻訳次に、定理 A (Keller) を適用する。定理 A は、「$\Gamma$ のコホモロジーが 0 次に集中する」ことと「$J(W)$ が 3 次元 Calabi-Yau 代数である」ことが同値（論理的に必要十分）であることを述べている。
+	ステップ 1 の結論により、「$J(W)$ は 3 次元 Calabi-Yau 代数ではない」ことが確定している。したがって、定理 A の対偶をとることで、**「$\Gamma$ のコホモロジーは 0 次に集中しない」**という結論が厳密に導かれる。
+	Ginzburg dg 代数 $\Gamma$ の構成上、正の次数のコホモロジーは自明に消滅する（生成元が 0 以下の次数しか持たないため）。
+	ゆえに、「0 次に集中しない」ということは、必然的にある整数 $i \ge 1$ が存在して $H^{-i}(\Gamma) \neq 0$ となることを意味する。（証明終）
+\end{myquote}
+
+次に、$K > 0$ の場合は次の通り。
+\begin{itemize}
+	\item $K=1$のとき。
+	
+	正整数解$(a,b,c)$は存在しない。
+	\footnote{
+		もし存在するなら$a\le b\le c$ としてよく、$a>2$である限り$c$によるmutationで最大成分が小さくなる。
+		$c$によるmutationを繰り返すことで$a=1,2$を満たす解に遷移する。
+		$K(1,b,c)=1,K(2,b,c)=1$を満たす正整数$b,c$が存在しないことを直接示すことができる。
+	}
+	\item $K=2$のとき。
+	
+	$(a,b,c)=(1,1,1)$のみが唯一の正整数解となる。
+	\footnote{
+		$K=1$のときと同様に、$(a,b,c)$で$a\le b\le c,a> 2$を満たすものは、$c$によるmutationで最大成分が小さくなる。
+		$c$によるmutationを繰り返すことで$a=1,2$を満たす解に遷移する。
+		$K(1,b,c)=2,K(2,b,c)=2$を直接解いて、$(a,b,c)=(1,1,1)$のみが正整数解であることを示せる。
+	}
+	この場合は直接計算で$H^{-2}(\Gamma(Q(1,1,1),W)) \neq 0$が得られる。
+	\item $K>2$のとき。
+	
+	次のGeminiによる説明を参照。
+	\begin{myquote}
+		【命題】もし $K(a, b, c) > 2$ であるならば、いかなるポテンシャル $W$ を選んだとしても、Ginzburg dg 代数 $\Gamma$ の次数 $-1$ のコホモロジーについて $H^{-1}(\Gamma) \neq 0$ が成立する。
+
+		【証明】第 1 段：ゲージ群の作用とスタビライザーの次元評価3 次ポテンシャルの空間 $V$ は、長さ 3 のサイクルの線形結合であるため、各矢印が張るベクトル空間のテンソル積として $V = \mathbb{C}^a \otimes \mathbb{C}^b \otimes \mathbb{C}^c$ と同一視でき、その次元は $\dim V = abc$ である。
+		この空間に対して、各矢印の基底変換群 $G = GL(a) \times GL(b) \times GL(c)$ が自然に作用する。群 $G$ の中心にあるスカラー行列の組 $(\lambda_1 I, \lambda_2 I, \lambda_3 I)$ のうち、$\lambda_1 \lambda_2 \lambda_3 = 1$ を満たすものは、いかなるポテンシャル $W$ に作用させても値を変化させない「自明なスタビライザー（$\simeq (\mathbb{C}^*)^2$）」をなす。
+		この自明な部分を割った有効なゲージ群を $G' = G / (\mathbb{C}^*)^2$ とすると、その次元は$$ \dim G' = a^2 + b^2 + c^2 - 2 $$となる。
+		任意の $W \in V$ を固定し、群の作用に関する軌道・固定群の定理（Orbit-Stabilizer Theorem）を適用する。軌道 $\mathcal{O}_W$ の次元は空間全体の次元 $\dim V$ を超えないため、有効なスタビライザー群 $G'_W = \mathrm{Stab}_{G'}(W)$ の次元は以下のように下から評価される。
+$$ \dim G'_W = \dim G' - \dim \mathcal{O}_W \ge (a^2 + b^2 + c^2 - 2) - abc = K(a, b, c) - 2 $$
+
+		第 2 段：リー代数から $H^{-1}(\Gamma)$ への直接的な埋め込みスタビライザー $G'_W$ のリー代数 $\mathfrak{g}'_W$ を考える。
+		これは「$W$ を不変にするような、各矢印の空間上の非自明な微小線形変換」の空間であり、第 1 段の評価から次が成り立つ。
+$$ \dim \mathfrak{g}'_W \ge K(a, b, c) - 2 $$
+		一方、Ginzburg dg 代数の構成において、次数 $-1$ のコホモロジー $H^{-1}(\Gamma)$ は、定義により「頂点由来の自明な変換（内部導分）を法とした、ポテンシャル $W$ を保つ微分の空間」と同型である。
+$$ H^{-1}(\Gamma) \cong \mathrm{Der}(A, W) / \mathrm{Inn}(A) $$
+		$\mathfrak{g}'_W$ の元はまさに $A$ 上の導分として作用し、$W$ を保ち、かつ自明な内部導分の寄与（2次元分）をすでに割り引いて構成されているため、ベクトル空間として $H^{-1}(\Gamma)$ に自然に単射で埋め込まれる（$\mathfrak{g}'_W \hookrightarrow H^{-1}(\Gamma)$）。
+		結論以上の次元評価と単射の存在を統合すると、$$ \dim H^{-1}(\Gamma) \ge \dim \mathfrak{g}'_W \ge K(a, b, c) - 2 $$が得られる。
+		仮定より $K(a, b, c) > 2$ であるため、$\dim H^{-1}(\Gamma) > 0$ が厳密に導かれる。すなわち、いかなるポテンシャル $W$ に対しても $H^{-1}(\Gamma) \neq 0$ となる。（証明終）
+	\end{myquote}
+	要検証。
+\end{itemize}
 
 
 \bibliography{reference.bib}
